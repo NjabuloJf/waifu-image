@@ -5,7 +5,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/Waifu-pics/waifu-api/config"
+	"github.com/NjabuloJf/waifu-image/config"
 )
 
 // CheckValid : check if endpoint is valid
