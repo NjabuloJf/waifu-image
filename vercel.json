@@ -1,3 +1,16 @@
 {
-  "framework": "go"
+  "buildCommand": "go build -o api/index main.go",
+  "framework": "go",
+  "functions": {
+    "api/index.go": {
+      "memory": 1024,
+      "maxDuration": 60
+    }
+  },
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "/api/index"
+    }
+  ]
 }
