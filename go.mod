@@ -1,4 +1,4 @@
-module github.com/Waifu-pics/waifu-api
+module github.com/NjabuloJf/waifu-image
 
 go 1.14
 
