@@ -5,8 +5,8 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/Waifu-pics/waifu-api/api"
-	"github.com/Waifu-pics/waifu-api/api/middleware"
+	"github.com/NjabuloJf/waifu-image/api"
+	"github.com/NjabuloJf/waifu-image/api/middleware"
 	"github.com/alexedwards/argon2id"
 	"github.com/gbrlsnchs/jwt/v3"
 	"github.com/labstack/echo"
