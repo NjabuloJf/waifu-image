@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"log"
 
-	"github.com/Waifu-pics/waifu-api/config"
+	"github.com/NjabuloJf/waifu-image/config"
 
 	_ "github.com/go-sql-driver/mysql" // MySQL
 )
