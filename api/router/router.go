@@ -1,7 +1,9 @@
 package router
 
 import (
+	"log"
 	"net/http"
+	"os"
 
 	"github.com/NjabuloJf/waifu-image/api"
 	"github.com/NjabuloJf/waifu-image/api/routes/admin"
@@ -15,6 +17,20 @@ import (
 // New : initialize router
 func New(options api.Options) {
 	e := echo.New()
+
+	// 👇 ADD PANIC RECOVERY MIDDLEWARE HERE 👇
+	e.Use(func(next echo.HandlerFunc) echo.HandlerFunc {
+		return func(c echo.Context) error {
+			defer func() {
+				if r := recover(); r != nil {
+					log.Printf("PANIC: %v", r)
+					c.JSON(http.StatusInternalServerError, map[string]string{"error": "Internal Server Error"})
+				}
+			}()
+			return next(c)
+		}
+	})
+	// 👆 END OF PANIC RECOVERY MIDDLEWARE 👆
 
 	api := e.Group("") // Root URL for the API location
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
@@ -33,5 +49,13 @@ func New(options api.Options) {
 		return c.JSON(200, options.Config.Endpoints)
 	})
 
-	e.Logger.Fatal(e.Start(":" + options.Config.Port))
+	// 👇 VERIFY VERCEL PORT 👇
+	// Vercel sets a PORT environment variable. We must use it.
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = options.Config.Port // Fallback to your config if not on Vercel
+	}
+
+	log.Printf("Starting server on port %s...", port)
+	e.Logger.Fatal(e.Start(":" + port))
 }
