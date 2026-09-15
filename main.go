@@ -19,16 +19,9 @@ func main() {
 
 	// Load configuration
 	conf := config.LoadConfig()
-	if conf == nil {
-		log.Fatalln("Failed to load config")
-	}
 
 	// Initialize database
 	db := database.InitSQL(conf)
-	if db == nil {
-		log.Fatalln("Failed to initialize database")
-	}
-	defer db.Close()
 
 	// Admin creation argument
 	if *newuser {
