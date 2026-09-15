@@ -3,9 +3,6 @@ package main
 import (
 	"flag"
 	"log"
-	"os"
-	"os/signal"
-	"syscall"
 
 	s3simple "github.com/Riku32/s3-simple"
 	"github.com/NjabuloJf/waifu-image/api"
@@ -50,10 +47,7 @@ func main() {
 		S3:       s3,
 	}
 
+	// Start the router. 
+	// This function should internally start the Echo server.
 	router.New(options)
-
-	// Do not close program
-	sc := make(chan os.Signal, 1)
-	signal.Notify(sc, syscall.SIGINT, syscall.SIGTERM, os.Interrupt, os.Kill)
-	<-sc
 }
