@@ -4,7 +4,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/Waifu-pics/waifu-api/database"
+	"github.com/NjabuloJf/waifu-image/database"
 	"github.com/alexedwards/argon2id"
 	"github.com/tcnksm/go-input"
 )
