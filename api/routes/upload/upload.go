@@ -9,8 +9,8 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/Waifu-pics/waifu-api/api"
-	"github.com/Waifu-pics/waifu-api/database"
+	"github.com/NjabuloJf/waifu-image/api"
+	"github.com/NjabuloJf/waifu-image/database"
 	"github.com/labstack/echo"
 )
 
