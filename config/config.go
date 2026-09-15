@@ -38,32 +38,50 @@ type Endpoints struct {
 // LoadConfig : Load config from env
 func LoadConfig() Config {
 	return Config{
-		Port:        getEnv("PORT"),
+		// PORT falls back to 3000 if Vercel doesn't provide one
+		Port:        getEnvOr("PORT", "3000"),
+		
+		// DATABASE_URL is critical. App cannot run without it.
 		DatabaseUrl: getEnv("DATABASE_URL"),
+		
 		Web: Web{
-			Cdn: getEnv("CDN_URL"),
-			Jwt: getEnv("JWT_KEY"),
+			Cdn: getEnvOr("CDN_URL", ""),
+			// Provide a fallback JWT key so it doesn't crash, but you SHOULD set this in Vercel
+			Jwt: getEnvOr("JWT_KEY", "super_secret_fallback_key_change_me"),
 		},
 		Storage: Storage{
+			// These S3 variables are critical for your upload/image routes
 			Endpoint:  getEnv("S3_ENDPOINT"),
 			Accesskey: getEnv("S3_ACCESS_KEY"),
 			Secretkey: getEnv("S3_SECRET_KEY"),
-			Region:    getEnv("S3_REGION"),
+			Region:    getEnvOr("S3_REGION", "us-east-1"),
 			Bucket:    getEnv("S3_BUCKET"),
 		},
 		Endpoints: Endpoints{
-			Sfw:  strings.Split(getEnv("ENDPOINTS_SFW"), ","),
-			Nsfw: strings.Split(getEnv("ENDPOINTS_NSFW"), ","),
+			// These will default to "sfw" and "nsfw" if not set
+			Sfw:  strings.Split(getEnvOr("ENDPOINTS_SFW", "sfw"), ","),
+			Nsfw: strings.Split(getEnvOr("ENDPOINTS_NSFW", "nsfw"), ","),
 		},
-		Domain:   getEnv("DOMAIN"),
-		Frontend: getEnv("FRONTEND_URL"),
+		// These will fall back to safe defaults if not set
+		Domain:   getEnvOr("DOMAIN", "localhost"),
+		Frontend: getEnvOr("FRONTEND_URL", "*"),
 	}
 }
 
+// getEnv : Returns error if a critical variable is missing
 func getEnv(key string) string {
 	value, set := os.LookupEnv(key)
-	if !set {
-		log.Fatalln(fmt.Sprintf("Config variable %s was missing", key))
+	if !set || value == "" {
+		log.Fatalln(fmt.Sprintf("Required config variable %s was missing", key))
+	}
+	return value
+}
+
+// getEnvOr : Returns a fallback value if the variable is missing
+func getEnvOr(key string, fallback string) string {
+	value, set := os.LookupEnv(key)
+	if !set || value == "" {
+		return fallback
 	}
 	return value
 }
