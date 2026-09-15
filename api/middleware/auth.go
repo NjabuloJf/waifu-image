@@ -1,7 +1,7 @@
 package middleware
 
 import (
-	"github.com/Waifu-pics/waifu-api/api"
+	"github.com/NjabuloJf/waifu-image/api"
 	"github.com/gbrlsnchs/jwt/v3"
 	"github.com/labstack/echo"
 )
