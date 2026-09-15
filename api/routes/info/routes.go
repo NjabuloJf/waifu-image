@@ -3,7 +3,7 @@ package info
 import (
 	"fmt"
 
-	"github.com/Waifu-pics/waifu-api/api"
+	"github.com/NjabuloJf/waifu-image/api"
 	"github.com/labstack/echo"
 )
 
