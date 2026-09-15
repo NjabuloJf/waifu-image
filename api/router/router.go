@@ -3,7 +3,6 @@ package router
 import (
 	"log"
 	"net/http"
-	"os"
 
 	"github.com/NjabuloJf/waifu-image/api"
 	"github.com/NjabuloJf/waifu-image/api/routes/admin"
@@ -14,11 +13,20 @@ import (
 	"github.com/labstack/echo/middleware"
 )
 
-// New : initialize router
-func New(options api.Options) {
-	e := echo.New()
+var (
+	echoInstance *echo.Echo
+)
 
-	// 👇 ADD PANIC RECOVERY MIDDLEWARE HERE 👇
+// init initializes the Echo instance once
+func init() {
+	echoInstance = echo.New()
+}
+
+// setupRouter configures all routes
+func setupRouter(options api.Options) {
+	e := echoInstance
+
+	// Panic recovery middleware
 	e.Use(func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
 			defer func() {
@@ -30,9 +38,10 @@ func New(options api.Options) {
 			return next(c)
 		}
 	})
-	// 👆 END OF PANIC RECOVERY MIDDLEWARE 👆
 
-	api := e.Group("") // Root URL for the API location
+	apiGroup := e.Group("")
+
+	// CORS middleware
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
 		Skipper:          middleware.DefaultSkipper,
 		AllowOrigins:     []string{"*", options.Config.Frontend},
@@ -40,22 +49,70 @@ func New(options api.Options) {
 		AllowCredentials: true,
 	}))
 
-	image.NewRouter(options, api)
-	admin.NewRouter(options, api)
-	upload.NewRouter(options, api)
-	info.NewRouter(options, api)
+	// Register routes
+	image.NewRouter(options, apiGroup)
+	admin.NewRouter(options, apiGroup)
+	upload.NewRouter(options, apiGroup)
+	info.NewRouter(options, apiGroup)
 
-	api.GET("/endpoints", func(c echo.Context) error {
+	// Endpoints route
+	apiGroup.GET("/endpoints", func(c echo.Context) error {
+		return c.JSON(200, options.Config.Endpoints)
+	})
+}
+
+var routesInitialized = false
+
+// HandleRequest handles individual HTTP requests for Vercel
+func HandleRequest(options api.Options, w http.ResponseWriter, r *http.Request) {
+	// Initialize routes only once
+	if !routesInitialized {
+		setupRouter(options)
+		routesInitialized = true
+	}
+
+	// Serve the request through Echo
+	echoInstance.ServeHTTP(w, r)
+}
+
+// New : initialize router (kept for backward compatibility, but not used on Vercel)
+func New(options api.Options) {
+	e := echo.New()
+
+	// Panic recovery middleware
+	e.Use(func(next echo.HandlerFunc) echo.HandlerFunc {
+		return func(c echo.Context) error {
+			defer func() {
+				if r := recover(); r != nil {
+					log.Printf("PANIC: %v", r)
+					c.JSON(http.StatusInternalServerError, map[string]string{"error": "Internal Server Error"})
+				}
+			}()
+			return next(c)
+		}
+	})
+
+	apiGroup := e.Group("")
+
+	// CORS middleware
+	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+		Skipper:          middleware.DefaultSkipper,
+		AllowOrigins:     []string{"*", options.Config.Frontend},
+		AllowMethods:     []string{http.MethodGet, http.MethodHead, http.MethodPut, http.MethodPatch, http.MethodPost, http.MethodDelete, http.MethodOptions},
+		AllowCredentials: true,
+	}))
+
+	// Register routes
+	image.NewRouter(options, apiGroup)
+	admin.NewRouter(options, apiGroup)
+	upload.NewRouter(options, apiGroup)
+	info.NewRouter(options, apiGroup)
+
+	// Endpoints route
+	apiGroup.GET("/endpoints", func(c echo.Context) error {
 		return c.JSON(200, options.Config.Endpoints)
 	})
 
-	// 👇 VERIFY VERCEL PORT 👇
-	// Vercel sets a PORT environment variable. We must use it.
-	port := os.Getenv("PORT")
-	if port == "" {
-		port = options.Config.Port // Fallback to your config if not on Vercel
-	}
-
-	log.Printf("Starting server on port %s...", port)
-	e.Logger.Fatal(e.Start(":" + port))
+	log.Printf("Starting server...")
+	e.Logger.Fatal(e.Start(":3000"))
 }
