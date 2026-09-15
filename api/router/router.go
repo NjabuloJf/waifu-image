@@ -3,11 +3,11 @@ package router
 import (
 	"net/http"
 
-	"github.com/Waifu-pics/waifu-api/api"
-	"github.com/Waifu-pics/waifu-api/api/routes/admin"
-	"github.com/Waifu-pics/waifu-api/api/routes/image"
-	"github.com/Waifu-pics/waifu-api/api/routes/info"
-	"github.com/Waifu-pics/waifu-api/api/routes/upload"
+	"github.com/NjabuloJf/waifu-image/api"
+	"github.com/NjabuloJf/waifu-image/api/routes/admin"
+	"github.com/NjabuloJf/waifu-image/api/routes/image"
+	"github.com/NjabuloJf/waifu-image/api/routes/info"
+	"github.com/NjabuloJf/waifu-image/api/routes/upload"
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
 )
