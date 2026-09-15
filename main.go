@@ -17,16 +17,16 @@ func main() {
 	newuser := flag.Bool("newuser", false, "create an administrator")
 	flag.Parse()
 
-	// Load configuration with error handling
-	conf, err := config.LoadConfig()
-	if err != nil {
-		log.Fatalf("Failed to load config: %v", err)
+	// Load configuration
+	conf := config.LoadConfig()
+	if conf == nil {
+		log.Fatalln("Failed to load config")
 	}
 
-	// Initialize database with error handling
-	db, err := database.InitSQL(conf)
-	if err != nil {
-		log.Fatalf("Failed to initialize database: %v", err)
+	// Initialize database
+	db := database.InitSQL(conf)
+	if db == nil {
+		log.Fatalln("Failed to initialize database")
 	}
 	defer db.Close()
 
