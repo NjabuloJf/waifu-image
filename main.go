@@ -17,8 +17,18 @@ func main() {
 	newuser := flag.Bool("newuser", false, "create an administrator")
 	flag.Parse()
 
-	conf := config.LoadConfig()
-	db := database.InitSQL(conf)
+	// Load configuration with error handling
+	conf, err := config.LoadConfig()
+	if err != nil {
+		log.Fatalf("Failed to load config: %v", err)
+	}
+
+	// Initialize database with error handling
+	db, err := database.InitSQL(conf)
+	if err != nil {
+		log.Fatalf("Failed to initialize database: %v", err)
+	}
+	defer db.Close()
 
 	// Admin creation argument
 	if *newuser {
@@ -38,7 +48,7 @@ func main() {
 	})
 
 	if err != nil {
-		log.Fatalln("Unable to start S3")
+		log.Fatalf("Unable to start S3: %v", err)
 	}
 
 	options := api.Options{
@@ -47,7 +57,7 @@ func main() {
 		S3:       s3,
 	}
 
-	// Start the router. 
+	// Start the router.
 	// This function should internally start the Echo server.
 	router.New(options)
 }
