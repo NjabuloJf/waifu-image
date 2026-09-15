@@ -2,8 +2,8 @@ package api
 
 import (
 	s3simple "github.com/Riku32/s3-simple"
-	"github.com/Waifu-pics/waifu-api/config"
-	"github.com/Waifu-pics/waifu-api/database"
+	"github.com/NjabuloJf/waifu-image/config"
+	"github.com/NjabuloJf/waifu-image/database"
 )
 
 // Options : route object
