@@ -8,11 +8,11 @@ import (
 	"syscall"
 
 	s3simple "github.com/Riku32/s3-simple"
-	"github.com/Waifu-pics/waifu-api/api"
-	"github.com/Waifu-pics/waifu-api/api/router"
-	"github.com/Waifu-pics/waifu-api/cmd/admin"
-	"github.com/Waifu-pics/waifu-api/config"
-	"github.com/Waifu-pics/waifu-api/database"
+	"github.com/NjabuloJf/waifu-image/api"
+	"github.com/NjabuloJf/waifu-image/api/router"
+	"github.com/NjabuloJf/waifu-image/cmd/admin"
+	"github.com/NjabuloJf/waifu-image/config"
+	"github.com/NjabuloJf/waifu-image/database"
 	_ "github.com/joho/godotenv/autoload"
 )
 
